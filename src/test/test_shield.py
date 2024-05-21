@@ -175,3 +175,13 @@ def test_get_logs():
     assert response.status_code == 200
     message = "Test EP13: /get_logs: PASSED"
     print(message)
+
+
+# ---------- EP14: /get_rignts ----------------------------------------
+def test_get_users():
+    time.sleep(delay)
+    response = requests.get(url="http://api:8000/get_rights",
+                            headers=header_admin)
+    assert response.status_code == 200
+    message = "Test EP14: /get_rightss: PASSED"
+    print(message)
