@@ -801,7 +801,7 @@ async def get_logs(file: LogFile,
                    identification=Header(None)):
     """
     Endpoint to get logs in jsonl format.
-    Needs admin authorization.
+    Needs basic authorization.
     Args: str, one of these names:
         - f1_score
         - preds_call
@@ -810,7 +810,7 @@ async def get_logs(file: LogFile,
         - train
         - update_data
     """
-    if check_user(identification, 1) is True:
+    if check_user(identification, 0) is True:
         # Get filenames from logs folder:
         filenames = os.listdir(path_logs)
 
@@ -827,3 +827,32 @@ async def get_logs(file: LogFile,
             raise HTTPException(
                 status_code=404,
                 detail="File doesn't exists.")
+
+# -------------- 14. Get Rights --------------------------------------------
+
+@api.get("/get_rights",
+          name="Get rights",
+          tags=["DATA"]
+          )
+async def get_all_users(identification=Header(None)):
+    """
+    Endpoint to get rights of user if it exists in user_db.
+    """
+    user, psw = identification.split(":")
+
+    with open(path_users_db, 'r') as file:
+        users_db = json.load(file)
+
+    try:
+        users_db[user]
+    except:
+        raise HTTPException(
+            status_code=401,
+            detail="Unknown user."
+        )
+    if users_db[user]["password"] == psw:
+            return users_db[user]['rights']
+    else:
+        raise HTTPException(
+                status_code=401,
+                detail="Invalid password")
