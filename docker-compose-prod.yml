@@ -9,7 +9,7 @@ services:
         source: shield-prod-volume
         target: /home/volume
     networks:
-      - shield-prod-network
+      - shield-network
 
   make_dataset:
     depends_on:
@@ -24,7 +24,7 @@ services:
         source: shield-prod-volume
         target: /home/volume
     networks:
-      - shield-prod-network
+      - shield-network
 
   create_users_db:
     image: alexandrewinger/shield:create_users_db
@@ -39,7 +39,7 @@ services:
         source: shield-prod-volume
         target: /home/volume
     networks:
-      - shield-prod-network
+      - shield-network
 
   train_model:
     image: alexandrewinger/shield:train_model
@@ -54,7 +54,7 @@ services:
         source: shield-prod-volume
         target: /home/volume
     networks:
-      - shield-prod-network
+      - shield-network
 
   api_shield:
     depends_on:
@@ -76,7 +76,7 @@ services:
         source: shield-prod-volume
         target: /home/volume
     networks:
-      - shield-prod-network  
+      - shield-network  
 
 
   monitoring_shield:
@@ -92,12 +92,12 @@ services:
         source: shield-prod-volume
         target: /home/volume
     networks:
-      - shield-prod-network
+      - shield-network
 
 volumes:
   shield-prod-volume:
 
 networks:
-  shield-prod-network:
+  shield-network:
     driver: bridge
 
