@@ -54,6 +54,8 @@
 # Lancement du conteneur à partir de l'image:
     docker run -p 8000:8000 --rm --mount type=volume,src=shield_volume,dst=/home/volume/ --network=shield-network --name api alexandrewinger/shield:api
 
+        docker run -p 8000:8000 --rm --mount type=volume,src=shield_volume,dst=/home/volume/ --name api alexandrewinger/shield:api
+
 # Test de l'api dans un autre terminal:
 curl.exe -X GET -i http://127.0.0.1:8000/status
 
