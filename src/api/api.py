@@ -19,8 +19,8 @@ import string
 root_path = Path(os.path.realpath(__file__)).parents[2]
 sys.path.append(os.path.join(root_path, "src", "data"))
 sys.path.append(os.path.join(root_path, "src", "models"))
-from update_data import data_update, data_update_without_saving
-from train_model import train_and_save_model, train_without_saving
+from update_data import data_update, data_update_without_saving # noqa E402
+from train_model import train_and_save_model, train_without_saving # noqa E402
 
 # ---------------------------- Paths ------------------------------------------
 path_data_preprocessed = os.path.join(root_path, "data", "preprocessed")
@@ -43,7 +43,7 @@ path_users_db = os.path.join(root_path, "src", "users_db", "users_db.json")
 # ---------------------------- HTTP Exceptions --------------------------------
 responses = {
     200: {"description": "OK"},
-    401: {"description": "Invalid username and/or password."}, 
+    401: {"description": "Invalid username and/or password."},
     404: {"description": "File not found."}
 }
 
@@ -68,7 +68,7 @@ def check_user(header, rights):
         users_db = json.load(file)
     try:
         user, psw = header.split(":")
-    except:
+    except: # noqa E722
         raise HTTPException(
             status_code=401,
             detail="Wrong format: you must sign following the pattern "
@@ -76,7 +76,7 @@ def check_user(header, rights):
         )
     try:
         users_db[user]
-    except:
+    except: # noqa E722
         raise HTTPException(
             status_code=401,
             detail="Unknown user."
@@ -129,10 +129,10 @@ api = FastAPI(
         {'name': 'PREDICTIONS',
          'description': 'Prédictions faites par le modèle.'},
         {'name': 'UPDATE',
-         'description': 'Mises à jour du modèle et des données', 
-         'name': 'MONITORING',
-         'description': 'Monitor model performances', 
-         'name': 'DATA',
+         'description': 'Mises à jour du modèle et des données'},
+        {'name': 'MONITORING',
+         'description': 'Monitor model performances'},
+        {'name': 'DATA',
          'description': 'Extract data from logs and database'}
         ])
 
@@ -143,6 +143,7 @@ api = FastAPI(
 async def is_fonctionnal():
     """
     Check if API is running.
+    Needs no particular rights.
     """
     return {"Shield API running well!"}
 
@@ -220,10 +221,10 @@ async def get_pred_from_test(identification=Header(None)):
         - Get a single line from pool and make prediction on it.
         - Write result log in preds_test.jsonl
 
-       Basic rights required. \n
+       Admin rights required. \n
        Identification: enter username and password as username:password.
     """
-    if check_user(identification, 0) is True:
+    if check_user(identification, 1) is True:
 
         # Get user:
         user = identification.split(":")[0]
@@ -336,6 +337,7 @@ async def post_pred_from_call(data: InputData, identification=Header(None)):
        par un agent des FdO.
        Identification: entrez votre identifiant et votre mot de passe
        au format identifiant:mot_de_passe
+       Basic rights required.
     """
 
     if check_user(identification, 0) is True:
@@ -360,15 +362,16 @@ async def post_pred_from_call(data: InputData, identification=Header(None)):
         # Préparation des métadonnées pour exportation
         metadata_dictionary = {
             "request_id": "".join(random.choices(string.digits, k=16)),
+            "index": None,
             "time_stamp": str(datetime.datetime.now()),
             "user_name": user,
             "context": "call",
             "response_status_code": 200,
-            "model version": model_name,
-            "input_features": test.to_dict(orient="records")[0],
             "output_prediction": int(pred[0]),
             "verified_prediction": None,
-            "prediction_time": pred_time_end - pred_time_start
+            "model version": model_name,
+            "prediction_time": pred_time_end - pred_time_start,
+            "input_features": test.to_dict(orient="records")[0]
             }
         metadata_json = json.dumps(obj=metadata_dictionary)
 
@@ -391,7 +394,9 @@ async def post_pred_from_call(data: InputData, identification=Header(None)):
          name='Entrainement du modèle',
          tags=['UPDATE'])
 async def get_train(identification=Header(None)):
-    """Fonction pour entrainer le modèle.
+    """
+    Train the model.
+    Admin rights required.
     """
 
     if check_user(identification, 1) is True:
@@ -449,8 +454,9 @@ class UpdateData(BaseModel):
           tags=['UPDATE'])
 async def update_data(update_data: UpdateData, identification=Header(None)):
     """
-    Fonction pour mettre à jour les données accidents. \n
-    Ecrase définitivement X/y_train/test.csv avec les nouvelles données
+    Update data. \n
+    Overwrite defintely X/y_train/test.csv with new data.
+    Admin rights required.
     """
 
     if check_user(identification, 1) is True:
@@ -516,6 +522,8 @@ async def label_prediction(prediction: Prediction,
 
     Retourne :
         str : confirmation de la mise à jour de l'enregistrement
+
+    Basic rights required.
     """
     if check_user(identification, 0) is True:
 
@@ -564,8 +572,10 @@ async def label_prediction_test(identification=Header(None)):
 
     Retourne :
         str : confirmation de la mise à jour de l'enregistrement
+
+    Admin rights required.
     """
-    if check_user(identification, 0) is True:
+    if check_user(identification, 1) is True:
 
         # Load preds_test.jsonl
         path_db_preds_test = os.path.join(path_logs, "preds_test.jsonl")
@@ -611,7 +621,8 @@ async def label_prediction_test(identification=Header(None)):
          name="Mise à jour du F1 score",
          tags=['UPDATE'])
 async def update_f1_score(identification=Header(None)):
-    """Fonction qui calcule et enregistre le dernier F1 score du modèle
+    """
+    Fonction qui calcule et enregistre le dernier F1 score du modèle
     en élargissant X_test et y_test aux nouvelles données labellisées.
     Ne modifie pas X_test.csv.
 
@@ -625,6 +636,8 @@ async def update_f1_score(identification=Header(None)):
 
     Retourne :
         str : confirmation de la mise à jour du F1 score
+
+    Admin rights required.
     """
     if check_user(identification, 1) is True:
 
@@ -708,6 +721,8 @@ async def get_f1_score(identification=Header(None)):
 
     Retourne :
         float : latest f1-score.
+
+    Admin rights required.
     """
     if check_user(identification, 1) is True:
 
@@ -738,6 +753,7 @@ async def post_new_model_score(update_data: UpdateData,
         - evaluate model
     Returns: new_f1_score
     Does not overwrite anything.
+    Admin rights required.
     """
     if check_user(identification, 1) is True:
 
@@ -773,13 +789,13 @@ async def post_new_model_score(update_data: UpdateData,
 # -------------- 12. Get all users --------------------------------------------
 
 @api.get("/get_users",
-          name="Get all users",
-          tags=["DATA"]
-          )
+         name="Get all users",
+         tags=["DATA"]
+         )
 async def get_all_users(identification=Header(None)):
     """
     Endpoint to get users_db in json format.
-    Needs admin authorization.
+    Admin rights required.
     """
     if check_user(identification, 1) is True:
         with open(path_users_db, 'r') as file:
@@ -801,7 +817,7 @@ async def get_logs(file: LogFile,
                    identification=Header(None)):
     """
     Endpoint to get logs in jsonl format.
-    Needs basic authorization.
+
     Args: str, one of these names:
         - f1_score
         - preds_call
@@ -809,6 +825,8 @@ async def get_logs(file: LogFile,
         - preds_test
         - train
         - update_data
+
+    Basic rights required.
     """
     if check_user(identification, 0) is True:
         # Get filenames from logs folder:
@@ -830,11 +848,12 @@ async def get_logs(file: LogFile,
 
 # -------------- 14. Get Rights --------------------------------------------
 
+
 @api.get("/get_rights",
-          name="Get rights",
-          tags=["DATA"]
-          )
-async def get_all_users(identification=Header(None)):
+         name="Get rights",
+         tags=["DATA"]
+         )
+async def get_all_users_rights(identification=Header(None)):
     """
     Endpoint to get rights of user if it exists in user_db.
     """
@@ -845,13 +864,13 @@ async def get_all_users(identification=Header(None)):
 
     try:
         users_db[user]
-    except:
+    except: # noqa E722
         raise HTTPException(
             status_code=401,
             detail="Unknown user."
         )
     if users_db[user]["password"] == psw:
-            return users_db[user]['rights']
+        return users_db[user]['rights']
     else:
         raise HTTPException(
                 status_code=401,
