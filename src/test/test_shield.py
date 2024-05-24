@@ -86,7 +86,7 @@ def test_predict_from_call():
 def test_train_model():
     time.sleep(delay)
     response = requests.get(url="http://api:8000/train",
-                             headers=header_admin)
+                            headers=header_admin)
     assert response.status_code == 200
     message = "Test EP6: /train: PASSED"
     print(message)
@@ -149,8 +149,8 @@ def test_get_f1_score():
 def test_evaluate_new_model():
     time.sleep(delay)
     response = requests.post(url="http://api:8000/evaluate_new_model",
-                            json=year_list,
-                            headers=header_admin)
+                             json=year_list,
+                             headers=header_admin)
     assert response.status_code == 200
     message = "Test EP11: /evaluate_new_model: PASSED"
     print(message)
@@ -170,15 +170,15 @@ def test_get_users():
 def test_get_logs():
     time.sleep(delay)
     response = requests.post(url="http://api:8000/get_logs",
-                            json=log_data,
-                            headers=header_admin)
+                             json=log_data,
+                             headers=header_admin)
     assert response.status_code == 200
     message = "Test EP13: /get_logs: PASSED"
     print(message)
 
 
-# ---------- EP14: /get_rignts ----------------------------------------
-def test_get_users():
+# ---------- EP14: /get_rights ----------------------------------------
+def test_get_rights():
     time.sleep(delay)
     response = requests.get(url="http://api:8000/get_rights",
                             headers=header_admin)
