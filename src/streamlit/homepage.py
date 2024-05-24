@@ -5,6 +5,7 @@ localhost = "127.0.0.1"
 
 st.title("SHIELD")
 st.write("Identification")
+st.sidebar.title(":shield: Shield App")
 
 username = st.text_input("Nom d'utilisateur:")
 password = st.text_input("Mot de passe:")
