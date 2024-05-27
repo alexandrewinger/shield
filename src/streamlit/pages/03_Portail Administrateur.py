@@ -8,6 +8,7 @@ import sys
 root_path = Path(os.path.realpath(__file__)).parents[3]
 sys.path.append(os.path.join(root_path, "src", "streamlit"))
 from streamlit_library import prepare_jsonl # noqa E402
+from streamlit_library import users # noqa E402
 
 # -------------- Variables declaration: ---------------------------------------
 localhost = "127.0.0.1"
@@ -44,3 +45,19 @@ if data.button("Visualiser les logs"):
 # ----- Get id
 # if st.button("Afficher l'identifiant"):
 #     st.write(st.session_state['id'])
+
+# --------------- Users management --------------------------------------------
+
+# ----- Add user:
+users.add_user()
+
+# ----- Remove user:
+users.remove_user()
+
+# ----- Get all users:
+users.get_all_users()
+
+# --------------- Model management --------------------------------------------
+
+
+# --------------- Monitoring and updates --------------------------------------
