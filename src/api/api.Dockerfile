@@ -8,6 +8,7 @@ ADD /src/models/train_model.py /home/shield/src/models/
 ADD /src/api/requirements_api.txt /home/shield/src/api/
 ADD logs /home/shield/logs
 
+ENV ENVIRONMENT=docker
 
 WORKDIR /home/shield/
 VOLUME /home/volume/
