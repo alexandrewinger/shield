@@ -534,6 +534,7 @@ async def label_prediction(prediction: Prediction,
         # Extraction de l'enregistrement correspondant au request_id reçu
         record_exists = "no"
         record_to_update = {}
+
         for record in db_preds_unlabeled:
             if int(record["request_id"]) == prediction.request_id:
                 record_exists = "yes"
@@ -542,10 +543,18 @@ async def label_prediction(prediction: Prediction,
                 # Update verified_prediction with y_true
                 record_to_update["verified_prediction"] = prediction.y_true
 
-                # Mise à jour de la base de données de prédictions labellisées
+                # Update preds_labeled.jsonl
                 metadata_json = json.dumps(obj=record_to_update)
                 with open(path_db_preds_labeled, "a") as file:
                     file.write(metadata_json + "\n")
+
+                # Remove record from original file:
+                db_preds_unlabeled.remove(record)
+
+        # Update preds_call.jsonl:
+            with open(path_db_preds_unlabeled, 'w') as file:
+                for line in db_preds_unlabeled:
+                    file.write(json.dumps(line) + '\n')
 
         if record_exists == "yes":
             return {"Enregistrement mis à jour. Merci pour votre retour."}
