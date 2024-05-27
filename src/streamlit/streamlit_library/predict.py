@@ -1,6 +1,25 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import requests
 from streamlit_library import features_dictionnary as feats_dict
+import lime
+import lime.lime_tabular
+import joblib
+import pandas as pd
+import numpy as np
+import os
+from pathlib import Path
+
+root_path = root_path = Path(os.path.realpath(__file__)).parents[3]
+path_data_preprocessed = os.path.join(root_path, "data", "preprocessed")
+path_X_train = os.path.join(path_data_preprocessed, "X_train.csv")
+path_models = os.path.join(root_path, "models")
+path_rdf = os.path.join(path_models, "rdf_v1.0_shield.joblib")
+
+
+def invert_dict(dict):
+    inverted_dict = {value: key for key, value in dict.items()}
+    return inverted_dict
 
 
 def call():
@@ -183,12 +202,39 @@ def call():
         features = dict(zip(feats_dict.feature_names, features_values))
         if 'features' not in st.session_state:
             st.session_state['features'] = features
+        st.write("Les données ont bien été validées. " +
+                 "Vous pouvez effectuer la prédiction.")
 
     if st.button("Faire la prédiction"):
         # Get previous features:
         features = st.session_state['features']
+
+        # Make prediction request:
         url_pred = f"http://{localhost}:8000/predict_from_call"
         response = requests.post(url=url_pred,
                                  json=features,
                                  headers=header_user)
+
+        # Write result:
         st.write(response.json())
+
+        # Display features importances with lime:
+        # TODO: change for volume reference:
+        rdf = joblib.load(path_rdf)
+        X_train = pd.read_csv(path_X_train)
+        input = dict(zip(invert_dict(feats_dict.feature_names), features))
+
+        explainer = lime.lime_tabular.LimeTabularExplainer(
+            X_train.values,
+            feature_names=input.keys(),  # list of features
+            class_names=["Non Prioritaire", "Prioritaire"],  # list of classes
+            discretize_continuous=True)
+
+        exp = explainer.explain_instance(
+            np.array(list(features.values())),
+            rdf.predict_proba,
+            num_features=5)
+
+        st.title('Explication des prédictions avec LIME')
+        st.write('## Explication LIME')
+        components.html(exp.as_html(), height=800)
