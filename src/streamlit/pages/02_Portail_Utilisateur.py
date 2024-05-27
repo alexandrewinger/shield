@@ -21,11 +21,8 @@ st.title("SHIELD")
 st.write("Bienvenue sur le portail SHIELD standard")
 
 # ----- Predict from call:
-# pred = st.container(border=True)
-# if st.button("Effectuer une prédiction à partir d'un appel:"):
 predict.call()
-# st.switch_page("pages/call_predict_page.py")
+
 
 # ----- Label prediction:
-
 label_prediction.from_call()
