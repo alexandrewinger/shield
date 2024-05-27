@@ -178,7 +178,7 @@ async def post_user(new_user: User, identification=Header(None)):
             outfile.write(update_users_db)
 
         # Return:
-        return {"New user successfully added!"}
+        return {"Nouvel Utilisateur ajouté."}
 
 # ---------- 3. Remove user: --------------------------------------------------
 
@@ -203,9 +203,9 @@ async def remove_user(old_user: OldUser, identification=Header(None)):
             update_users_db = json.dumps(users_db, indent=4)
             with open(path_users_db, "w") as outfile:
                 outfile.write(update_users_db)
-            return {"User removed!"}
+            return {"Utilisateur supprimé."}
         except KeyError:
-            return "User doesn't exists."
+            return "L'utilisateur spécifé est introuvable."
 
 
 # ---------- 4. Predict from test: --------------------------------------------
