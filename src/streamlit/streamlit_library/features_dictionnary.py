@@ -10,6 +10,12 @@ path_to_dep = os.path.join(path_streamlit_lib,
 path_to_com = os.path.join(path_streamlit_lib,
                            'code_insee_commune_2023.csv')
 
+
+# -------------- Functions ----------------------------------------------------
+def get_dict(dict_name):
+    return globals().get(dict_name)
+
+
 # -------------- Dictionnaries ------------------------------------------------
 feature_names = {
     "place": "Place occupée dans le véhicule par l'usager " +
