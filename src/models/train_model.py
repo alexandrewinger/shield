@@ -6,10 +6,13 @@ import numpy as np
 import os
 from pathlib import Path
 
+environment = os.getenv('ENVIRONMENT', 'local')
+
 
 def train_and_save_model():
     # paths:
     root_path = Path(os.path.realpath(__file__)).parents[2]
+    volume_path = Path(root_path).parents[1] # noqa F841
     path_data_preprocessed = os.path.join(root_path, "data", "preprocessed")
     path_X_train = os.path.join(path_data_preprocessed, "X_train.csv")
     path_y_train = os.path.join(path_data_preprocessed, "y_train.csv")
@@ -46,6 +49,13 @@ def train_and_save_model():
     model_filename = os.path.join(path_model, f"{model_name}.joblib")
     joblib.dump(rf_classifier, model_filename)
     print(f"Model {model_name}.joblib trained and saved successfully.")
+
+    # -- Save the model inside volume if inside a container:
+#    if environment == 'docker':
+#        path_volume_models = os.path.join(volume_path, "models")
+#        model_volume_filename = os.path.join(path_volume_models,
+#                                             f"{model_name}.joblib")
+#        joblib.dump(rf_classifier, model_volume_filename)
 
 
 def train_without_saving():
