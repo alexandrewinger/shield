@@ -7,6 +7,6 @@ flake8
 httpx
 requests
 numpy
-pandas
+pandas==2.2.2
 joblib
-scikit-learn
+scikit-learn==1.4.2
