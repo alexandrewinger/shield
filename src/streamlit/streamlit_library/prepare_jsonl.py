@@ -45,7 +45,7 @@ def jsonl_to_df(data_jsonl):
     with open('data.jsonl', 'w') as file:
         for data in new_jsonl:
             # Convert data in json string and save it inside file:
-            file.write(json.dumps(data) + '\n')
+            file.write(json.dumps(data) + "\n")
 
     df = pd.read_json('data.jsonl', lines=True)
     df['request_id'] = df['request_id'].astype("str")
