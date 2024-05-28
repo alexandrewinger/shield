@@ -554,7 +554,7 @@ async def label_prediction(prediction: Prediction,
         # Update preds_call.jsonl:
             with open(path_db_preds_unlabeled, 'w') as file:
                 for line in db_preds_unlabeled:
-                    file.write(json.dumps(line) + '\n')
+                    file.write(json.dumps(line) + "\n")
 
         if record_exists == "yes":
             return {"Enregistrement mis à jour. Merci pour votre retour."}
@@ -619,7 +619,7 @@ async def label_prediction_test(identification=Header(None)):
         if n != 0:
             with open(path_db_preds_test, 'w') as file:
                 for item in preds_test:
-                    file.write(json.dumps(item) + '\n')
+                    file.write(json.dumps(item) + "\n")
 
         return {"{number} enregistrement(s) mis à jour.".format(number=n)}
 
@@ -702,7 +702,8 @@ async def update_f1_score(identification=Header(None)):
             "time_stamp": str(datetime.datetime.now()),
             "user_name": user,
             "model version": model_name,
-            "f1_score_macro_average": f1_score_macro_average}
+            "f1_score_macro_average": f1_score_macro_average
+            }
         metadata_json = json.dumps(obj=metadata_dictionary)
 
         # Exportation des métadonnées
