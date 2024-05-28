@@ -20,9 +20,12 @@ st.set_page_config(layout="wide")
 st.title("SHIELD")
 st.write("Bienvenue sur le portail SHIELD standard")
 
-# ----- Predict from call:
-predict.call()
+tab1, tab2 = st.tabs(["Utilisation", "Feedback"])
 
+# ----- Predict from call:
+with tab1:
+    predict.call()
 
 # ----- Label prediction:
-label_prediction.from_call()
+with tab2:
+    label_prediction.from_call()

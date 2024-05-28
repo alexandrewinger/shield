@@ -11,7 +11,7 @@ from streamlit_library import prepare_jsonl # noqa E402
 from streamlit_library import users # noqa E402
 
 # -------------- Variables declaration: ---------------------------------------
-localhost = "127.0.0.1"
+localhost = "api" if os.environ.get('ENVIRONMENT') == 'docker' else "127.0.0.1" # noqa E501
 # user_payload = st.session_state['id']
 header_admin = {"identification": "admin:4dmin"}
 header_user = {"identification": "fdo:c0ps"}
@@ -19,45 +19,73 @@ header_user = {"identification": "fdo:c0ps"}
 # --------------- Page --------------------------------------------------------
 st.title("SHIELD")
 st.write("Bienvenue sur le portail SHIELD admin")
+tab0, tab1, tab2, tab3 = st.tabs(["Dbug", "Users", "Model demo", "Monitoring"])
 
-# ----- Predict from test:
-if st.button("Effectuer une prédiction à partir de l'ensemble de test:"):
-    response = requests.get(url=f"http://{localhost}:8000/predict_from_test",
-                            headers=header_admin)
-    st.write(response.json())
+with tab0:
+    # ----- Get jsonl:
+    data = st.container(border=True)
+    option = data.selectbox(
+        "Quel type d'information souhaitez-vous?",
+        ("f1_score", "preds_call", "preds_labeled",
+         "preds_test", "train", "update_data"))
+    log_data = {"name": option}
 
-# ----- Get jsonl:
-data = st.container(border=True)
-option = data.selectbox(
-    "Quel type d'information souhaitez-vous?",
-    ("f1_score", "preds_call", "preds_labeled",
-     "preds_test", "train", "update_data"))
-log_data = {"name": option}
+    if data.button("Visualiser les logs"):
+        response = requests.post(url=f"http://{localhost}:8000/get_logs",
+                                 json=log_data,
+                                 headers=header_admin)
+        data_jsonl = response.json()
+        df = prepare_jsonl.jsonl_to_df(data_jsonl)
+        data.dataframe(df)
 
-if data.button("Visualiser les logs"):
-    response = requests.post(url=f"http://{localhost}:8000/get_logs",
-                             json=log_data,
-                             headers=header_admin)
-    data_jsonl = response.json()
-    df = prepare_jsonl.jsonl_to_df(data_jsonl)
-    data.dataframe(df)
-
-# ----- Get id
-# if st.button("Afficher l'identifiant"):
-#     st.write(st.session_state['id'])
+    # ----- Get id
+    # if st.button("Afficher l'identifiant"):
+    #     st.write(st.session_state['id'])
 
 # --------------- Users management --------------------------------------------
+with tab1:
+    # ----- Add user:
+    users.add_user()
 
-# ----- Add user:
-users.add_user()
+    # ----- Remove user:
+    users.remove_user()
 
-# ----- Remove user:
-users.remove_user()
-
-# ----- Get all users:
-users.get_all_users()
+    # ----- Get all users:
+    users.get_all_users()
 
 # --------------- Model management --------------------------------------------
+with tab2:
+    st.write("Model demo")
 
+    # ----- Get f1_score:
+    if st.button("Obtenir le f1_score actuel"):
+        response = requests.get(
+            url=f"http://{localhost}:8000/get_f1_score",
+            headers=header_admin)
+        f1_score = response.json()
+        st.write("Le f1_score vaut actuellement", f1_score[0], ".")
+
+    # ----- Predict from test:
+    if st.button("Effectuer une prédiction à partir de l'ensemble de test"):
+        response = requests.get(
+            url=f"http://{localhost}:8000/predict_from_test",
+            headers=header_admin)
+        st.write(response.json())
+
+    # ----- Label preds test:
+    if st.button("Labelliser les prédictions faites à partir de l'ensemble de test"): # noqa E501
+        response = requests.get(
+            url=f"http://{localhost}:8000/label_pred_test",
+            headers=header_admin)
+        st.write(response.json()[0])
+
+    # ----- Update f1_score:
+    if st.button("Mettre le f1_score à jour"):
+        response = requests.get(
+            url=f"http://{localhost}:8000/update_f1_score",
+            headers=header_admin)
+        st.write(response.json())
 
 # --------------- Monitoring and updates --------------------------------------
+with tab3:
+    st.write("Monitoring")

@@ -1,7 +1,9 @@
-import streamlit as st
+import os
 import requests
+import streamlit as st
 
-localhost = "127.0.0.1"
+
+localhost = "api" if os.environ.get('ENVIRONMENT') == 'docker' else "127.0.0.1" # noqa E501
 
 st.title("SHIELD")
 st.write("Identification")
