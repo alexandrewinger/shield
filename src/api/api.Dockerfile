@@ -5,7 +5,7 @@ ADD /src/data/update_data.py /home/shield/src/data/
 ADD /src/data/make_dataset.py /home/shield/src/data/
 ADD /src/data/data_id.json /home/shield/src/data/
 ADD /src/models/train_model.py /home/shield/src/models/
-ADD /src/api/requirements_api.txt /home/shield/src/api/
+ADD /src/api/api_requirements.txt /home/shield/src/api/
 ADD logs /home/shield/logs
 
 ENV ENVIRONMENT=docker
@@ -16,7 +16,7 @@ EXPOSE 8000
 
 RUN apt-get update \
 && apt-get install python3-pip -y\
-&& pip3 install -r /home/shield/src/api/requirements_api.txt  
+&& pip3 install -r /home/shield/src/api/api_requirements.txt  
 
 CMD ["/bin/bash", "-c", "\
 # Import users_db.json from volume:
