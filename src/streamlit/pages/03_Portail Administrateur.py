@@ -110,3 +110,19 @@ with tab2:
 # --------------- Monitoring and updates --------------------------------------
 with tab3:
     st.write("Monitoring")
+
+    # ----- Evaluate new model:
+    if st.button("Evaluer les performances du modèle après mise à jour des données"): # noqa E501
+        year_list = {"start_year": 2019, "end_year": 2020}
+        url = f"http://{localhost}:8000/evaluate_new_model"
+        response = requests.post(url=url,
+                                 json=year_list,
+                                 headers=header_admin)
+        st.write(response.json())
+
+    # ----- Monitor and update if necessary:
+    if st.button("Déclencher la mise à jour des données et le réentrainement si nécessaire."): # noqa E501
+        url = f"http://{localhost}:8000/monitor"
+        response = requests.get(url=url,
+                                headers=header_admin)
+        st.write(response.json())
