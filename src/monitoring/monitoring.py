@@ -1,11 +1,12 @@
 # ---------- Imports -------------------------------------------------------- #
 import requests
+import os
 
 # ---------- Payloads ------------------------------------------------------- #
 header_admin = {"identification": "admin:4dmin"}
 year_list = {"start_year": 2019, "end_year": 2019}
 new_model = {"name": "new_trained_model"}
-localhost = "api"  # TODO: add env variable to swith between context
+localhost = "api" if os.environ.get('ENVIRONMENT') == 'docker' else "127.0.0.1" # noqa E501
 
 # ---------- Get last f1_score ---------------------------------------------- #
 response = requests.get(url=f"http://{localhost}:8000/get_f1_score",

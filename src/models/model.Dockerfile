@@ -1,17 +1,16 @@
 FROM ubuntu:22.04
 
 ADD /src/models/train_model.py /home/shield/src/models/
-
+ADD /src/models/models_requirements.txt /home/shield/src/models/
 WORKDIR /home/shield/
+
+ENV ENVIRONMENT=docker
 
 EXPOSE 8004
 
 RUN apt-get update \
 && apt-get install python3-pip -y\
-&& pip install numpy \
-&& pip install pandas \
-&& pip install joblib \
-&& pip install scikit-learn
+&& pip3 install -r /home/shield/src/models/models_requirements.txt  
 
 CMD ["/bin/bash", "-c", "\
 # Import train data (previously created in step 2) from volume to container:

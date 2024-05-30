@@ -8,7 +8,7 @@ import sys
 # internal:
 root_path = Path(os.path.realpath(__file__)).parents[2]
 sys.path.append(os.path.join(root_path, "src", "data"))
-from make_dataset import main, make_dataset_without_saving
+from make_dataset import main, make_dataset_without_saving # noqa E402
 
 # paths:
 path_data_raw = os.path.join(root_path, "data", "raw")

@@ -80,9 +80,6 @@ services:
 
 
   monitoring_shield:
-    depends_on:
-      test_api_shield:
-        condition: service_completed_successfully
     image: alexandrewinger/shield:monitoring
     container_name: monitoring
     ports:
