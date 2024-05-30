@@ -9,6 +9,7 @@ import os
 from pathlib import Path
 from pydantic import BaseModel
 import random
+import requests
 from sklearn.metrics import f1_score
 import sys
 import time
@@ -653,29 +654,32 @@ async def update_f1_score(identification=Header(None)):
         # Récupération de l'identifiant:
         user = identification.split(":")[0]
 
-        # TODO: Load last version of model:
+        # Load last version of model:
         model_name = get_latest_model(path_models)
         model_path = os.path.join(path_models, model_name)
         rdf = joblib.load(model_path)
 
-        # Chargement des données de test
+        # Load test data:
         X_test = pd.read_csv(path_X_test)
         y_test = pd.read_csv(path_y_test)
 
         # Chargement de la base de données de prédictions labellisées
         with open(path_db_preds_labeled, "r") as file:
             db_preds_labeled = [json.loads(line) for line in file]
+
+        # Create new empty dataframes:
         X_test_new = pd.DataFrame()
         y_test_new = pd.Series()
 
+        # Fill new dataframes with new labelled data:
         for record in db_preds_labeled:
-            # Chargement des variables d'entrée dans le df X_test_new
+            # Load input features in X_test_new:
             X_record = record["input_features"]
             X_record = {key: [value] for key, value in X_record.items()}
             X_record = pd.DataFrame(X_record)
             X_test_new = pd.concat([X_test_new, X_record])
 
-            # Chargement des variables de sortie dans le df y_test_new
+            # Load target in y_test_new
             y_record = pd.Series(record["verified_prediction"])
             if y_test_new.empty is True:
                 y_test_new = y_record
@@ -812,7 +816,7 @@ async def get_all_users(identification=Header(None)):
             users_db = json.load(file)
         return users_db
 
-# -------------- 13. Get logs --------------------------------------------
+# -------------- 13. Get logs -------------------------------------------------
 
 
 class LogFile(BaseModel):
@@ -856,7 +860,7 @@ async def get_logs(file: LogFile,
                 status_code=404,
                 detail="File doesn't exists.")
 
-# -------------- 14. Get Rights --------------------------------------------
+# -------------- 14. Get Rights -----------------------------------------------
 
 
 @api.get("/get_rights",
@@ -885,3 +889,13 @@ async def get_all_users_rights(identification=Header(None)):
         raise HTTPException(
                 status_code=401,
                 detail="Invalid password")
+
+
+# ---------- EP15: Monitoring -------------------------------------------------
+
+@api.get("/monitor",
+         name="Monitoring",
+         tags=['MONITORING'])
+def get_monitor(identification=Header(None)):
+    if check_user(identification, 1) is True:
+        requests.get(url="http://monitoring:8008/monitor")
