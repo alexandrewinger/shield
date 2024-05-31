@@ -1,0 +1,1 @@
+* * * * * root python /home/shield/src/cron-monitor/cron-monitor.py >> /home/shield/logs/cron_logs.txt 2>&1
