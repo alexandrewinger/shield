@@ -10,18 +10,13 @@ WORKDIR /home/shield/
 
 EXPOSE 8002
 
-RUN apk update \
-&& apk add python3 \
-&& apk add py3-click \
-&& apk add py3-numpy \
-&& apk add py3-pandas \
-&& apk add py3-scikit-learn
+RUN apk update && \
+    apk upgrade && \
+    apk add --no-cache python3 && \
+    apk add --no-cache py3-pip
 
-# Install requirements from file: (unused)
-# && apk add --no-cache $(cat /src/data/requirements.txt | xargs)
-
-# Command to keep container running for debugging if needed:
-# tail -f /dev/null
+RUN pip3 install -r /home/shield/src/data/make_dataset_requirements.txt \
+    --break-system-packages
 
 CMD ["/bin/sh", "-c", " \
 # Import raw data (previously created in step 1) from volume to container:
