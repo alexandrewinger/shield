@@ -185,3 +185,13 @@ def test_get_rights():
     assert response.status_code == 200
     message = "Test EP14: /get_rightss: PASSED"
     print(message)
+
+
+# ---------- EP15: /Monitoring ----------------------------------------
+def test_monitoring():
+    time.sleep(delay)
+    response = requests.get(url="http://api:8000/monitor",
+                            headers=header_admin)
+    assert response.status_code == 200
+    message = "Test EP15: /monitorings: PASSED"
+    print(message)
