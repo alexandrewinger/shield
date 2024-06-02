@@ -10,7 +10,11 @@ import numpy as np
 import os
 from pathlib import Path
 
-root_path = root_path = Path(os.path.realpath(__file__)).parents[3]
+if os.environ.get('ENVIRONMENT') == 'docker':
+    root_path = "/home/volume"
+else:
+    root_path = Path(os.path.realpath(__file__)).parents[3]
+
 path_data_preprocessed = os.path.join(root_path, "data", "preprocessed")
 path_X_train = os.path.join(path_data_preprocessed, "X_train.csv")
 path_models = os.path.join(root_path, "models")
@@ -25,7 +29,7 @@ def invert_dict(dict):
 def call():
 
     # -------------- Variables declaration: -----------------------------------
-    localhost = "127.0.0.1"
+    localhost = "api" if os.environ.get('ENVIRONMENT') == 'docker' else "127.0.0.1" # noqa E501
     header_user = {"identification": "fdo:c0ps"}
 
     st.title(body="Faire une prédiction à partir d'un appel")

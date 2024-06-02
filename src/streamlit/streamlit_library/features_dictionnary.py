@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 
 # --------------- Paths -------------------------------------------------------
-root_path = root_path = Path(os.path.realpath(__file__)).parents[3]
+root_path = Path(os.path.realpath(__file__)).parents[3]
 path_streamlit_lib = os.path.join(root_path, "src/streamlit/streamlit_library")
 path_to_dep = os.path.join(path_streamlit_lib,
                            'code_insee_departement_2023.csv')

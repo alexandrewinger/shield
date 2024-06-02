@@ -107,6 +107,21 @@ services:
       - shield-network
     init: true
 
+  streamlit_shield:
+    depends_on:
+      train_model:
+        condition: service_completed_successfully
+    image: alexandrewinger/shield:streamlit
+    container_name: streamlit
+    ports:
+      - "8501:8501" 
+    volumes:
+      - type: volume
+        source: shield-prod-volume
+        target: /home/volume
+    networks:
+      - shield-network
+
 volumes:
   shield-prod-volume:
 
