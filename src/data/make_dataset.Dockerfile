@@ -1,9 +1,9 @@
 FROM alpine:latest
 
 ADD /src/data/make_dataset.py /home/shield/src/data/
+ADD /src/data/make_dataset_requirements.txt /home/shield/src/data/
 
 # Unused ADD: 
-# ADD /src/data/requirements_make_dataset.txt /home/shield/src/data/
 # ADD /src/data/requirements_make_dataset.txt /home/shield/data/preprocessed
 
 WORKDIR /home/shield/
