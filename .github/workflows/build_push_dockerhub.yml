@@ -70,6 +70,27 @@ jobs:
           load: true
           tags: alexandrewinger/shield:test_shield
       
+      - name: Build MONITORING
+        uses: docker/build-push-action@v5
+        with:
+          file: src/monitoring/monitoring.Dockerfile
+          load: true
+          tags: alexandrewinger/shield:monitoring
+
+      - name: Build CRON MONITOR
+        uses: docker/build-push-action@v5
+        with:
+          file: src/cron-monitor/cron-monitor.Dockerfile
+          load: true
+          tags: alexandrewinger/shield:cron-monitor
+      
+      - name: Build STREAMLIT
+        uses: docker/build-push-action@v5
+        with:
+          file: src/streamlit/streamlit.Dockerfile
+          load: true
+          tags: alexandrewinger/shield:streamlit
+      
       # ---------- TEST -------------------------------------------------------
       - name: Run tests
         run: docker compose up --detach
@@ -116,3 +137,24 @@ jobs:
           file: src/test/test_shield.Dockerfile
           push: true
           tags: alexandrewinger/shield:test_shield
+      
+      - name: Build and push MONITORING
+        uses: docker/build-push-action@v5
+        with:
+          file: src/monitoring/monitoring.Dockerfile
+          load: true
+          tags: alexandrewinger/shield:monitoring
+
+      - name: Build and push CRON MONITOR
+        uses: docker/build-push-action@v5
+        with:
+          file: src/cron-monitor/cron-monitor.Dockerfile
+          load: true
+          tags: alexandrewinger/shield:cron-monitor
+      
+      - name: Build and push STREAMLIT
+        uses: docker/build-push-action@v5
+        with:
+          file: src/streamlit/streamlit.Dockerfile
+          load: true
+          tags: alexandrewinger/shield:streamlit
