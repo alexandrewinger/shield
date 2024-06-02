@@ -91,3 +91,15 @@ docker run -p 8008:8008 --rm --mount type=volume,src=shield_volume,dst=/home/vol
 
 # Test de l'api dans un autre terminal:
 curl.exe -X GET -i http://127.0.0.1:8008/status
+
+# --------------- Image 9. Cron Monitor -----------------------------------------
+# Création de l'image `cron-monitor`: 
+docker image build  -f ./src/cron-monitor/cron-monitor.Dockerfile -t alexandrewinger/shield:cron-monitor .
+
+# Lancement du conteneur à partir de l'image:
+docker run -p 8009:8009 --rm --mount type=volume,src=shield_volume,dst=/home/volume/ --init --network=shield-network --name cron-monitor alexandrewinger/shield:cron-monitor
+
+docker run -p 8009:8009 --rm --mount type=volume,src=shield_volume,dst=/home/volume/ --init --name cron-monitor alexandrewinger/shield:cron-monitor
+
+# Test de l'api dans un autre terminal:
+curl.exe -X GET -i http://127.0.0.1:8009/status
