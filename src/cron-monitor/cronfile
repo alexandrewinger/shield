@@ -1,0 +1,1 @@
+0 8 * * 1 root /usr/bin/python/python3 /home/shield/src/cron-monitor/cron-monitor.py

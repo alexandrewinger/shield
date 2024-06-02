@@ -91,6 +91,22 @@ services:
     networks:
       - shield-network
 
+  cron-monitor_shield:
+    depends_on:
+      train_model:
+        condition: service_completed_successfully
+    image: alexandrewinger/shield:cron-monitor
+    container_name: cron-monitor
+    ports:
+      - "8009:8009" 
+    volumes:
+      - type: volume
+        source: shield-prod-volume
+        target: /home/volume
+    networks:
+      - shield-network
+    init: true
+
 volumes:
   shield-prod-volume:
 
