@@ -24,6 +24,6 @@ if st.button("S'identifier"):
         st.session_state['id'] = user_payload
 
     if rights == 0:
-        st.switch_page("pages/standard_user_page.py")
+        st.switch_page("pages/02_Portail_Utilisateur.py")
     else:
-        st.switch_page("pages/admin_page.py")
+        st.switch_page("pages/02_Portail_Utilisateur.py")
