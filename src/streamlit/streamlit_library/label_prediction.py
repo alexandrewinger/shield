@@ -1,12 +1,13 @@
 import streamlit as st
 import requests
 from streamlit_library import prepare_jsonl
+import os
 
 
 def from_call():
 
     # -------------- Variables declaration: -----------------------------------
-    localhost = "127.0.0.1"
+    localhost = "api" if os.environ.get('ENVIRONMENT') == 'docker' else "127.0.0.1" # noqa E501
     header_user = {"identification": "fdo:c0ps"}
     log_data = {"name": "preds_call"}
 
