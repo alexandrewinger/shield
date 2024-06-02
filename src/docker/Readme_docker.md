@@ -101,5 +101,11 @@ docker run -p 8009:8009 --rm --mount type=volume,src=shield_volume,dst=/home/vol
 
 docker run -p 8009:8009 --rm --mount type=volume,src=shield_volume,dst=/home/volume/ --init --name cron-monitor alexandrewinger/shield:cron-monitor
 
-# Test de l'api dans un autre terminal:
-curl.exe -X GET -i http://127.0.0.1:8009/status
+# --------------- Image 10. Streamlit -----------------------------------------
+# Création de l'image `streamlit`: 
+docker image build  -f ./src/streamlit/streamlit.Dockerfile -t alexandrewinger/shield:streamlit .
+
+# Lancement du conteneur à partir de l'image:
+docker run -p 8501:8501 --rm --mount type=volume,src=shield_volume,dst=/home/volume/ --init --network=shield-network --name streamlit alexandrewinger/shield:streamlit
+
+docker run -p 8501:8501 --rm --mount type=volume,src=shield_volume,dst=/home/volume/ --init --name streamlit alexandrewinger/shield:streamlit
