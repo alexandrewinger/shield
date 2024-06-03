@@ -18,12 +18,33 @@ else:
 path_data_preprocessed = os.path.join(root_path, "data", "preprocessed")
 path_X_train = os.path.join(path_data_preprocessed, "X_train.csv")
 path_models = os.path.join(root_path, "models")
-path_rdf = os.path.join(path_models, "rdf_v1.0_shield.joblib")
 
 
+# --------------- Functions: --------------------------------------------------
 def invert_dict(dict):
     inverted_dict = {value: key for key, value in dict.items()}
     return inverted_dict
+
+
+def get_latest_model(path):
+    """
+    Get latest model version.
+    Args:
+        - path: str, path to directory containing model files
+    Returns:
+        - latest model name as str
+    """
+    model_names = os.listdir(path)
+    if '.gitkeep' in model_names:
+        model_names.remove('.gitkeep')
+    minor_versions = []
+    for model_name in model_names:
+        version = model_name.split("_")[1]
+        minor_version = int(version.split(".")[1])
+        minor_versions.append(minor_version)
+    latest_minor = max(minor_versions)
+    latest_version = "rdf_v1." + str(latest_minor) + "_shield.joblib"
+    return latest_version
 
 
 def call():
@@ -31,6 +52,7 @@ def call():
     # -------------- Variables declaration: -----------------------------------
     localhost = "api" if os.environ.get('ENVIRONMENT') == 'docker' else "127.0.0.1" # noqa E501
     header_user = {"identification": "fdo:c0ps"}
+    path_rdf = os.path.join(path_models, get_latest_model(path_models))
 
     st.title(body="Faire une prédiction à partir d'un appel")
 
