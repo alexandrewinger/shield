@@ -33,6 +33,7 @@ jobs:
         with:
           file: src/data/import_data.Dockerfile
           load: true
+          push: false
           tags: alexandrewinger/shield:import_data
       
       - name: Build MAKE DATASET
@@ -40,6 +41,7 @@ jobs:
         with:
           file: src/data/make_dataset.Dockerfile
           load: true
+          push: false
           tags: alexandrewinger/shield:make_dataset
       
       - name: Build CREATE USERS DB
@@ -47,6 +49,7 @@ jobs:
         with:
           file: src/users_db/create_users_db.Dockerfile
           load: true
+          push: false
           tags: alexandrewinger/shield:create_users_db
 
       - name: Build TRAIN MODEL
@@ -54,6 +57,7 @@ jobs:
         with:
           file: src/models/model.Dockerfile
           load: true
+          push: false
           tags: alexandrewinger/shield:train_model
 
       - name: Build API
@@ -61,6 +65,7 @@ jobs:
         with:
           file: src/api/api.Dockerfile
           load: true
+          push: false
           tags: alexandrewinger/shield:api
 
       - name: Build TEST SHIELD
@@ -68,6 +73,7 @@ jobs:
         with:
           file: src/test/test_shield.Dockerfile
           load: true
+          push: false
           tags: alexandrewinger/shield:test_shield
       
       - name: Build MONITORING
@@ -75,6 +81,7 @@ jobs:
         with:
           file: src/monitoring/monitoring.Dockerfile
           load: true
+          push: false
           tags: alexandrewinger/shield:monitoring
 
       - name: Build CRON MONITOR
@@ -82,6 +89,7 @@ jobs:
         with:
           file: src/cron-monitor/cron-monitor.Dockerfile
           load: true
+          push: false
           tags: alexandrewinger/shield:cron-monitor
       
       - name: Build STREAMLIT
@@ -89,11 +97,12 @@ jobs:
         with:
           file: src/streamlit/streamlit.Dockerfile
           load: true
+          push: false
           tags: alexandrewinger/shield:streamlit
       
       # ---------- TEST -------------------------------------------------------
       - name: Run tests
-        run: docker compose up --detach
+        run: docker compose -f docker-compose-test.yml up --detach
 
       # ---------- PUSH -------------------------------------------------------
       - name: Build and push IMPORT DATA
