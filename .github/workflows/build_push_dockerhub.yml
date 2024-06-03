@@ -151,19 +151,19 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           file: src/monitoring/monitoring.Dockerfile
-          load: true
+          push: true
           tags: alexandrewinger/shield:monitoring
 
       - name: Build and push CRON MONITOR
         uses: docker/build-push-action@v5
         with:
           file: src/cron-monitor/cron-monitor.Dockerfile
-          load: true
+          push: true
           tags: alexandrewinger/shield:cron-monitor
       
       - name: Build and push STREAMLIT
         uses: docker/build-push-action@v5
         with:
           file: src/streamlit/streamlit.Dockerfile
-          load: true
+          push: true
           tags: alexandrewinger/shield:streamlit
