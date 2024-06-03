@@ -3,7 +3,7 @@
 **SHIELD** (Safety Hazard Identification and Emergency Law Deployment) is an app that uses machine learning to predict the priority of a road accident based upon 28 caracteristics received by a police administrator during a call. Its purpose is to help prioritize interventions to gain in efficiency.
 
 ## Project Team:
-SHIELD was first developped in its ealry stages by the team:
+SHIELD was first developped in its early stages by the team:
 
 - Fabrice **Charraud** ([@FCharraud](https://github.com/FCharraud))
 - Omar **Choa** ([@omarchoa](https://github.com/omarchoa))
