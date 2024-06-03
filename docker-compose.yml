@@ -4,7 +4,7 @@ services:
     container_name: import_data
     volumes:
       - type: volume
-        source: prod-volume
+        source: prod_volume
         target: /home/volume
     networks:
       - shield-network
@@ -17,7 +17,7 @@ services:
     container_name: make_dataset
     volumes:
       - type: volume
-        source: prod-volume
+        source: prod_volume
         target: /home/volume
     networks:
       - shield-network
@@ -30,7 +30,7 @@ services:
     container_name: create_users
     volumes:
       - type: volume
-        source: prod-volume
+        source: prod_volume
         target: /home/volume
     networks:
       - shield-network
@@ -43,7 +43,7 @@ services:
     container_name: train_model
     volumes:
       - type: volume
-        source: prod-volume
+        source: prod_volume
         target: /home/volume
     networks:
       - shield-network
@@ -56,12 +56,12 @@ services:
     container_name: api
     ports:
       - "8000:8000" 
+    volumes:
       - type: volume
-        source: prod-volume
+        source: prod_volume
         target: /home/volume
     networks:
       - shield-network  
-
 
   monitoring_shield:
     image: alexandrewinger/shield:monitoring
@@ -70,7 +70,7 @@ services:
       - "8008:8008" 
     volumes:
       - type: volume
-        source: prod-volume
+        source: prod_volume
         target: /home/volume
     networks:
       - shield-network
@@ -85,7 +85,7 @@ services:
       - "8009:8009" 
     volumes:
       - type: volume
-        source: prod-volume
+        source: prod_volume
         target: /home/volume
     networks:
       - shield-network
@@ -101,13 +101,13 @@ services:
       - "8501:8501" 
     volumes:
       - type: volume
-        source: prod-volume
+        source: prod_volume
         target: /home/volume
     networks:
       - shield-network
 
 volumes:
-  prod-volume:
+  prod_volume:
 
 networks:
   shield-network:
