@@ -126,11 +126,11 @@ api = FastAPI(
     version="0.1",
     openapi_tags=[
         {'name': 'USERS',
-         'description': 'Gestion des utilisateurs'},
+         'description': 'Users Management'},
         {'name': 'PREDICTIONS',
-         'description': 'Prédictions faites par le modèle.'},
+         'description': 'Predictions made by the model.'},
         {'name': 'UPDATE',
-         'description': 'Mises à jour du modèle et des données'},
+         'description': 'Update data and model'},
         {'name': 'MONITORING',
          'description': 'Monitor model performances'},
         {'name': 'DATA',
@@ -163,6 +163,10 @@ class User(BaseModel):
 async def post_user(new_user: User, identification=Header(None)):
     """Enpoint to add new user to users database. \n
        Admin rights required. \n
+       Arguments: \n
+            - username (str): name of the new user
+            - password (str): password of the user
+            - rights (optionnal, int): 0 for basic rights, 1 for admin rights.
        Identification: enter username and password as username:password.
     """
     if check_user(identification, 1) is True:
@@ -194,6 +198,8 @@ class OldUser(BaseModel):
 async def remove_user(old_user: OldUser, identification=Header(None)):
     """Enpoint to remove existing user to users database. \n
        Admin rights required. \n
+       Arguments: \n
+            - user (str): name of an existing user
        Identification: enter username and password as username:password.
     """
     if check_user(identification, 1) is True:
@@ -217,9 +223,9 @@ async def remove_user(old_user: OldUser, identification=Header(None)):
          responses=responses)
 async def get_pred_from_test(identification=Header(None)):
     """Enpoint to make a prediction from a single record in test pool. \n
-       Fictionnal endpoint for monitoring (no real life use):
+       Fictionnal endpoint for monitoring (no real life use): \n
         - Split X_test in two parts : eval and pool
-        - Get a single line from pool and make prediction on it.
+        - Get a single line from pool and return prediction on it.
         - Write result log in preds_test.jsonl
 
        Admin rights required. \n
@@ -256,6 +262,9 @@ async def get_pred_from_test(identification=Header(None)):
             with open(path_db_preds_test, "r") as file:
                 preds_test = [json.loads(line) for line in file]
             i = preds_test[-1]['index'] + 1
+
+            if i not in X_test_pool.index.tolist():
+                i = X_test_pool.index.tolist()[0]
         else:
             i = X_test_pool.index.tolist()[0]
 
@@ -330,15 +339,16 @@ class InputData(BaseModel):
 
 
 @api.post('/predict_from_call',
-          name="Effectue une prediction à partir de saisie opérateur.",
+          name="Make a prediction based upon features inputed by a police" +
+               " officer",
           tags=['PREDICTIONS'],
           responses=responses)
 async def post_pred_from_call(data: InputData, identification=Header(None)):
-    """Fonction pour effectuer une prédiction à partir d'une saisie effectuée
-       par un agent des FdO.
-       Identification: entrez votre identifiant et votre mot de passe
-       au format identifiant:mot_de_passe
-       Basic rights required.
+    """
+    Endpoint to make prediction based upon data entered by an agent. \n
+    Write log in preds_call.jsonl. \n
+    Basic rights required. \n
+    Identification: enter username and password as username:password.
     """
 
     if check_user(identification, 0) is True:
@@ -392,11 +402,12 @@ async def post_pred_from_call(data: InputData, identification=Header(None)):
 # ---------- 6. Entraîner le modèle avec de nouvelles données: ----------------
 
 @api.get('/train',
-         name='Entrainement du modèle',
+         name='Train the model.',
          tags=['UPDATE'])
 async def get_train(identification=Header(None)):
     """
-    Train the model.
+    Train the model. \n
+    Write metadata in log train.jsonl. \n
     Admin rights required.
     """
 
@@ -451,12 +462,17 @@ class UpdateData(BaseModel):
 
 
 @api.post('/update_data',
-          name='Mise à jour des données accidents',
+          name='Update database',
           tags=['UPDATE'])
 async def update_data(update_data: UpdateData, identification=Header(None)):
     """
     Update data. \n
-    Overwrite defintely X/y_train/test.csv with new data.
+    Overwrite defintely X/y_train/test.csv with new data. \n
+    Arguments: \n
+        - start_year (int): first year to update. Must be 2019 or 2020.
+        - end_year (int): last year to update. Must be 2019 or 2020.
+    If you want only one year, just input the same year as start and end. \n
+    Write log in update_data.jsonl. \n
     Admin rights required.
     """
 
@@ -504,26 +520,17 @@ class Prediction(BaseModel):
 
 
 @api.post('/label_prediction',
-          name="Labellisation d'une prédiction enregistrée",
+          name="Label a prediction recorded from a call",
           tags=['UPDATE'])
 async def label_prediction(prediction: Prediction,
                            identification=Header(None)):
-    """Fonction qui labellise une prédiction enregistrée
-    à partir du retour utilisateur.
-
-    Paramètres :
-        prediction (class Prediction) : référence de la prédiction à
-        labelliser et label correspondant
-        identification (str) : identifiants utilisateur selon le format
-        nom_d_utilisateur:mot_de_passe
-
-    Lève :
-        HTTPException401 : identifiants non valables
-        HTTPException404 : enregistrement non existant
-
-    Retourne :
-        str : confirmation de la mise à jour de l'enregistrement
-
+    """
+    Label a recorded prediction by a user. \n
+    Arguments: \n
+        - request_id (int): must be an id present in preds_call.jsonl
+        - y_true (int): 0 if the intervention was in fact not prioritary,
+                        1 if it was prioritary.
+    Write log in preds_labeled.jsonl. \n
     Basic rights required.
     """
     if check_user(identification, 0) is True:
@@ -570,19 +577,16 @@ async def label_prediction(prediction: Prediction,
 
 
 @api.get('/label_pred_test',
-         name="Labellisation d'une prédiction test enregistrée",
+         name="Label a prediction recorded from a test",
          tags=['UPDATE'])
 async def label_prediction_test(identification=Header(None)):
-    """Fonction qui labellise une prédiction test enregistrée
-    à partir des données dans y_test.
-
-    Lève :
-        HTTPException401 : identifiants non valables
-        HTTPException404 : enregistrement non existant
-
-    Retourne :
-        str : confirmation de la mise à jour de l'enregistrement
-
+    """
+    Label a recorded prediction from test data. \n
+    Arguments: \n
+        - request_id (int): must be an id present in preds_call.jsonl
+        - y_true (int): 0 if the intervention was in fact not prioritary,
+                        1 if it was prioritary.
+    Write log in preds_labeled.jsonl. \n
     Admin rights required.
     """
     if check_user(identification, 1) is True:
@@ -628,25 +632,13 @@ async def label_prediction_test(identification=Header(None)):
 
 
 @api.get('/update_f1_score',
-         name="Mise à jour du F1 score",
+         name="Update f1-score",
          tags=['UPDATE'])
 async def update_f1_score(identification=Header(None)):
     """
-    Fonction qui calcule et enregistre le dernier F1 score du modèle
-    en élargissant X_test et y_test aux nouvelles données labellisées.
-    Ne modifie pas X_test.csv.
-
-    Paramètres :
-        identification (str) : identifiants administrateur selon
-        le format nom_d_utilisateur:mot_de_passe
-
-    Lève :
-        HTTPException401 : identifiants non valables
-        HTTPException403 : accès non autorisé
-
-    Retourne :
-        str : confirmation de la mise à jour du F1 score
-
+    Function evaluating f1-score by adding new labellised data
+    to X_test and y_test, without overwriting the base data. \n
+    Add new f1_score to f1_scores.jsonl. \n
     Admin rights required.
     """
     if check_user(identification, 1) is True:
@@ -724,16 +716,8 @@ async def update_f1_score(identification=Header(None)):
          tags=['UPDATE'])
 async def get_f1_score(identification=Header(None)):
     """
-    Returns latest f1-score.
-    Paramètres :
-        identification (str) : identifiants administrateur selon
-        le format nom_d_utilisateur:mot_de_passe
-
-    Lève :
-        HTTPException401 : identifiants non valables
-        HTTPException403 : accès non autorisé
-
-    Retourne :
+   Get latest f1-score from f1_scores.jsonl.\n
+    Returns : \n
         float : latest f1-score.
 
     Admin rights required.
@@ -761,12 +745,13 @@ async def get_f1_score(identification=Header(None)):
 async def post_new_model_score(update_data: UpdateData,
                                identification=Header(None)):
     """
-    Triggers:
+    Triggers: \n
         - update data by adding a new year
         - train model on new data
         - evaluate model
-    Returns: new_f1_score
-    Does not overwrite anything.
+    Returns: \n
+        - new_f1_score
+    Does not overwrite anything. \n
     Admin rights required.
     """
     if check_user(identification, 1) is True:
@@ -808,7 +793,9 @@ async def post_new_model_score(update_data: UpdateData,
          )
 async def get_all_users(identification=Header(None)):
     """
-    Endpoint to get users_db in json format.
+    Endpoint to get users_db in json format. \n
+    Return: \n
+        - users_db.json
     Admin rights required.
     """
     if check_user(identification, 1) is True:
@@ -832,7 +819,7 @@ async def get_logs(file: LogFile,
     """
     Endpoint to get logs in jsonl format.
 
-    Args: str, one of these names:
+    Arguments: str, one of these names: \n
         - f1_score
         - preds_call
         - preds_labelled
@@ -869,7 +856,9 @@ async def get_logs(file: LogFile,
          )
 async def get_all_users_rights(identification=Header(None)):
     """
-    Endpoint to get rights of user if it exists in user_db.
+    Endpoint to get rights of user if it exists in user_db. \n
+    Arguments: \n
+        -username and password (str) in format username:password
     """
     user, psw = identification.split(":")
 
@@ -897,5 +886,8 @@ async def get_all_users_rights(identification=Header(None)):
          name="Monitoring",
          tags=['MONITORING'])
 def get_monitor(identification=Header(None)):
+    """
+    Triggers monitoring process by requesting monitoring api. \n
+    """
     if check_user(identification, 1) is True:
         requests.get(url="http://monitoring:8008/monitor")
