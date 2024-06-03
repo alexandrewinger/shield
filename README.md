@@ -1,7 +1,31 @@
 # 🛡️ Project Name: SHIELD
 
-(Safety Hazard Identification and Emergency Law Deployment)
+**SHIELD** (Safety Hazard Identification and Emergency Law Deployment) is an app that uses machine learning to predict the priority of a road accident based upon 28 caracteristics received by a police administrator during a call. Its purpose is to help prioritize interventions to gain in efficiency.
 
+## Project Team:
+SHIELD was first developped in its ealry stages by the team:
+
+- Fabrice **Charraud** ([@FCharraud](https://github.com/FCharraud))
+- Omar **Choa** ([@omarchoa](https://github.com/omarchoa))
+- Michael **Deroche** ([@miklderoche](https://github.com/miklderoche))
+- Alexandre **Winger** ([@alexandrewinger](https://github.com/alexandrewinger))
+
+Now, it is only developped by **Alexandre WINGER**.
+
+## Setup
+
+### 1- First, you'll have to clone the repo:
+
+    `git clone https://github.com/alexandrewinger/shield.git`
+
+### 2- Let's change our current repository:
+    `cd shield`
+
+### 3- Launch the app:
+    `docker-compose up`
+
+### 4- The streamlit app should be ready for you to test in your favorite browser:
+    `http://127.0.0.1:8501`
 
 ## Project Organization
 ------------
@@ -33,166 +57,24 @@
     ├── src                <- Source code for use in this project.
     │   ├── __init__.py    <- Makes src a Python module
     │   │
-    │   ├── api           <- Scripts concerning the api  
-    │   │   ├── api.py 
-    │   │   └── test_api.py
+    │   ├── api            <- Scripts concerning the api  
     │   │
-    │   ├── data           <- Scripts to download or generate data
-    │   │   ├── create_data_tree.py 
-    │   │   ├── import_raw_data.py 
-    │   │   ├── make_dataset.py 
-    │   │   └── update_data.py
+    │   ├── cron-monitor   <- Files for monitoring via cronjob
     │   │
-    │   ├── docker           <- Scripts to manage docker
-    │   │   ├── build_images.sh
-    │   │   ├── build_push_images.sh
-    │   │   ├── push_images.sh 
-    │   │   └── Readme_docker.md
-    |   |
-    │   ├── features       <- Scripts to turn raw data into features for modeling
-    │   │   └── build_features.py
+    │   ├── data           <- Scripts to download and preprocess data
     │   │
-    │   ├── models         <- Scripts to train models and then use trained models to make
-    │   │   │                 predictions
-    │   │   ├── predict_model.py
-    │   │   └── train_model.py
+    │   ├── docker         <- Scripts to manage docker
     │   │
-    │   ├── visualization  <- Scripts to create exploratory and results oriented visualizations
-    │   │   └── visualize.py
-    │   └── config         <- Describe the parameters used in train_model.py and predict_model.py
+    │   ├── models         <- Files for training model
+    │   │
+    │   ├── monitoring     <- Files for monitoring
+    │   │   
+    │   ├── streamlit      <- Files for streamlit
+    │   │  
+    │   ├── test           <- Files for testing
+    │   │  
+    │   └── users_db       <- Files for managing users database
 
 ---------
-
-## Steps to follow on Linux
-
-Convention : All python scripts must be run from the root specifying the relative file path.
-
-### 1- Create a virtual environment using Virtualenv.
-
-    `python -m venv my_env`
-
-###   Activate it 
-
-    `chmod +x my_env/bin/activate
-    source my_env/bin/activate`
-
-###   Install the packages from requirements.txt
-
-    `pip install -r requirements.txt` 
-
-### 3- Create data tree:
-
-    `python src/data/create_data_tree.py`
-
-### 4- Execute import_raw_data.py to import the 4 datasets.
-
-    `python src/data/import_raw_data.py`
-
-### 5- Execute make_dataset.py 
-
-    `python src/data/make_dataset.py`
-
-### 6- Execute train_model.py to instanciate the model in joblib format
-
-    `python src/models/train_model.py`
-
-### 7- Create users database:
-
-    `python src/users_db/create_users_db.py
-
-### 8- Run the api:
-
-    `uvicorn --app-dir src/api api:api --reload --host=127.0.0.1 --port=8000`
-
-### 9- Check if the api is running:
-
-In a new terminal, type:
-
-    `curl -X GET http://127.0.0.1:8000/status`
-
-It should return: "L'api fonctionne."
-
-### 10- Run the tests:
-
-    `python src/api/test_api.py`
-
-### 11- Manually test the api:
-
-In your navigator, go to http://127.0.0.1:8000/docs
-
-You can test all the endpoints. When needed, you will be asked a username and a password. We implemented two types of users:
-_ Adminstrator Users: try it with `admin:4dmin`. This user's type can run every endpoint.
-_ Standard Users: try it with `fdo:c0ps`. This user's type can only run the following endpoints: /status (which doesn't requires any identification), /predict_from_call, /predict_from_test, /label
-
-### 12- Test the api with terminal command:
-
-All commands are written in the file ./src/api/Readme_api.md
-
-
-------------------------
-## Steps to follow on Windows
-
-Convention : All python scripts must be run from the root specifying the relative file path.
-
-### 1- Create a virtual environment using Virtualenv.
-
-    `python -m venv my_env`
-
-###   Activate it 
-
-    `my_env/Scripts/activate`
-
-###   Install the packages from requirements.txt
-
-    `pip install -r requirements.txt` 
-
-### 3- Create data tree:
-
-    `python src/data/create_data_tree.py`
-
-### 4- Execute import_raw_data.py to import the 4 datasets.
-
-    `python src/data/import_raw_data.py`
-
-### 5- Execute make_dataset.py 
-
-    `python src/data/make_dataset.py`
-
-### 6- Execute train_model.py to instanciate the model in joblib format
-
-    `python src/models/train_model.py`
-
-### 7- Create users database:
-
-    `python src/users_db/create_users_db.py
-
-### 8- Run the api:
-
-    `uvicorn --app-dir src/api api:api --reload --host=127.0.0.1 --port=8000`
-
-### 9- Check if the api is running:
-
-In a new terminal, type:
-
-    `curl -X GET http://127.0.0.1:8000/status`
-
-It should return: "L'api fonctionne."
-
-### 10- Run the tests:
-
-    `python src/api/test_api.py`
-
-### 11- Manually test the api:
-
-In your navigator, go to http://127.0.0.1:8000/docs
-
-You can test all the endpoints. When needed, you will be asked a username and a password. We implemented two types of users:
-_ Adminstrator Users: try it with `admin:4dmin`. This user's type can run every endpoint.
-_ Standard Users: try it with `fdo:c0ps`. This user's type can only run the following endpoints: /status (which doesn't requires any identification), /predict_from_call, /predict_from_test, /label
-
-### 12- Test the api with terminal command:
-
-All commands are written in the file ./src/api/Readme_api.md
-
 
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
