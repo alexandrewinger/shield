@@ -1,4 +1,5 @@
-# https://github.com/alexandrewinger/shield/blob/master/reports/images/shield.jpg Project Name: SHIELD
+# ![shield](https://github.com/alexandrewinger/shield/assets/65301787/51ab2388-e49a-4588-b451-3b42d75b487e)
+Project Name: SHIELD
 
 **SHIELD** (Safety Hazard Identification and Emergency Law Deployment) is an app that uses machine learning to predict the priority of a road accident based upon 28 caracteristics received by a police administrator during a call. Its purpose is to help prioritize interventions to gain in efficiency.
 
