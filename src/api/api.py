@@ -613,7 +613,8 @@ async def label_prediction_test(identification=Header(None)):
                 record_to_update["verified_prediction"] = int(real_y)
 
                 # Mise à jour de l'entrée dans preds_test.jsonl:
-                preds_test[j]["verified_prediction"] = int(real_y)
+                # preds_test[j]["verified_prediction"] = int(real_y)
+                del preds_test[j]
 
                 # Mise à jour de la base de données de prédictions labellisées
                 metadata_json = json.dumps(obj=record_to_update)
