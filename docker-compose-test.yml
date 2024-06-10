@@ -4,7 +4,7 @@ services:
     container_name: import_data
     volumes:
       - type: volume
-        source: app_volume
+        source: test_volume
         target: /home/volume
     networks:
       - app_network
@@ -17,7 +17,7 @@ services:
     container_name: make_dataset
     volumes:
       - type: volume
-        source: app_volume
+        source: test_volume
         target: /home/volume
     networks:
       - app_network
@@ -30,7 +30,7 @@ services:
     container_name: create_users
     volumes:
       - type: volume
-        source: app_volume
+        source: test_volume
         target: /home/volume
     networks:
       - app_network
@@ -43,7 +43,7 @@ services:
     container_name: train_model
     volumes:
       - type: volume
-        source: app_volume
+        source: test_volume
         target: /home/volume
     networks:
       - app_network
@@ -58,7 +58,7 @@ services:
       - "8000:8000" 
     volumes:
       - type: volume
-        source: app_volume
+        source: test_volume
         target: /home/volume
     networks:
       - app_network  
@@ -73,7 +73,7 @@ services:
       - "8007:8007" 
     volumes:
       - type: volume
-        source: app_volume
+        source: test_volume
         target: /home/volume
     networks:
       - app_network
@@ -85,7 +85,7 @@ services:
       - "8008:8008" 
     volumes:
       - type: volume
-        source: app_volume
+        source: test_volume
         target: /home/volume
     networks:
       - app_network
@@ -100,7 +100,7 @@ services:
       - "8009:8009" 
     volumes:
       - type: volume
-        source: app_volume
+        source: test_volume
         target: /home/volume
     networks:
       - app_network
@@ -116,13 +116,13 @@ services:
       - "8501:8501" 
     volumes:
       - type: volume
-        source: app_volume
+        source: test_volume
         target: /home/volume
     networks:
       - app_network
 
 volumes:
-  app_volume:
+  test_volume:
 
 networks:
   app_network:
